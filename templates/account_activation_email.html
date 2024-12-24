@@ -1,0 +1,7 @@
+Hi {{ user.username }},
+
+Thank you for registering! Please verify your email by clicking the link below:
+
+{{ domain }}{% url 'activate' uid=uid token=token %}
+
+If you did not create this account, you can safely ignore this email.
