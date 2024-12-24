@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser, User
 from django.db import models
 
 
@@ -79,3 +79,21 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"Booking by {self.customer.username} for {self.room.hotel.name}"
+
+
+class CustomUser(AbstractUser):
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='customuser_groups',  # Avoiding conflict with 'Group.user_set'
+        blank=True,
+        help_text='The groups this user belongs to.',
+        verbose_name='groups',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='customuser_permissions',  # Avoiding conflict with 'Permission.user_set'
+        blank=True,
+        help_text='Specific permissions for this user.',
+        verbose_name='user permissions',
+    )
+    verified = models.BooleanField(default=False)  # Email verification status

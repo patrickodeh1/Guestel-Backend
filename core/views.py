@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .forms import UserRegistrationForm, EstablishmentRegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
+from .models import CustomUser
 
 
 def home(request):
@@ -48,3 +51,16 @@ def user_login(request):
 def logout_view(request):
     logout(request)
     return redirect('user_login')
+
+
+def verify_email(request, token):
+    try:
+        user = CustomUser.objects.get(profile__verification_token=token)
+        user.verified = True
+        user.profile.verification_token = None  # Clear the token after verification
+        user.save()
+        messages.success(request, "Your email has been verified!")
+        return redirect('login')
+    except CustomUser.DoesNotExist:
+        messages.error(request, "Invalid or expired verification link.")
+        return redirect('login')

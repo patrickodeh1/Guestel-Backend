@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Hotel, Room, Booking
+from .models import Hotel, Room, Booking, CustomUser
+from django.contrib.auth.admin import UserAdmin
 
 
 admin.site.site_header = "Hostify Adminstration"
@@ -23,3 +24,10 @@ class BookingAdmin(admin.ModelAdmin):
     list_display = ('customer', 'room', 'check_in_date', 'check_out_date', 'is_confirmed')
     list_filter = ('is_confirmed', 'check_in_date', 'check_out_date')
     search_fields = ('customer__username', 'room__hotel__name')
+
+
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
+    model = CustomUser
+    list_display = ('username', 'email', 'verified', 'is_staff', 'is_active')
+    list_filter = ('verified', 'is_staff', 'is_active')
