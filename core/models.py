@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser, User
+from django.conf import settings
 from django.db import models
 
 
@@ -9,7 +10,7 @@ class Hotel(models.Model):
     city = models.CharField(max_length=100, help_text="City where the establishment is located.")
     description = models.TextField(blank=True, null=True, help_text="Optional description of the establishment.")
     owner = models.OneToOneField(
-        User, 
+        settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE, 
         related_name='hotel',
         help_text="The owner of this establishment."
@@ -57,7 +58,7 @@ class Room(models.Model):
 class Booking(models.Model):
     """Represents a booking made by a user."""
     customer = models.ForeignKey(
-        User, 
+        settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE, 
         related_name='bookings',
         help_text="The user who made this booking."
