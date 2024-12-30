@@ -9,7 +9,7 @@ admin.site.site_title = "Hostify Admin Dashboard"
 
 @admin.register(Hotel)
 class HotelAdmin(admin.ModelAdmin):
-    list_display = ('name', 'address', 'city', 'owner')
+    list_display = ('name', 'address', 'city', 'user', 'phone_number')
     search_fields = ('name', 'city', 'owner__username')
     list_filter = ('city',)
 
@@ -29,5 +29,5 @@ class BookingAdmin(admin.ModelAdmin):
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ('username', 'email', 'verified', 'is_staff', 'is_active')
-    list_filter = ('verified', 'is_staff', 'is_active')
+    list_display = ('username', 'email', 'verified_email', 'is_staff', 'is_active')
+    list_filter = ('verified_email', 'is_staff', 'is_active')

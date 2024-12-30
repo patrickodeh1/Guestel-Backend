@@ -9,7 +9,13 @@ class Hotel(models.Model):
     address = models.TextField(help_text="Full address of the establishment.")
     city = models.CharField(max_length=100, help_text="City where the establishment is located.")
     description = models.TextField(blank=True, null=True, help_text="Optional description of the establishment.")
-    owner = models.OneToOneField(
+    phone_number = models.CharField(
+    max_length=15, 
+    blank=True, 
+    null=True, 
+    help_text="Contact phone number for the establishment."
+)
+    user = models.OneToOneField(
         settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE, 
         related_name='hotel',
@@ -97,4 +103,4 @@ class CustomUser(AbstractUser):
         help_text='Specific permissions for this user.',
         verbose_name='user permissions',
     )
-    verified = models.BooleanField(default=False)  # Email verification status
+    verified_email = models.BooleanField(default=False)  # Email verification status

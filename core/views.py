@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib import messages
 from .forms import UserRegistrationForm, EstablishmentRegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
@@ -25,14 +25,16 @@ def user_register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False  # Deactivate the account until email verification
-            user.save()
+            user = form.save()
+            """user.is_active = False  # Deactivate the account until email verification
+            user.save()"""
+            login(request, user)
+            return redirect('home')
 
             # Send email verification
-            current_site = get_current_site(request)
+            """current_site = get_current_site(request)
             subject = 'Activate Your Account'
-            message = render_to_string('registration/account_activation_email.html', {
+            message = render_to_string('account_activation_email.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -40,7 +42,7 @@ def user_register(request):
             })
             send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
 
-            return HttpResponse('Please check your email to confirm your account.')
+            return HttpResponse('Please check your email to confirm your account.')"""
     else:
         form = UserRegistrationForm()
     return render(request, 'user_register.html', {'form': form})
@@ -63,8 +65,11 @@ def user_login(request):
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            login(request, user)
-            return redirect('home')
+            if user.is_active:
+                login(request, user)
+                return redirect('home')
+            else:
+                messages.error(request, 'Your account is not yet active. Please check your mail for activation link')
     else:
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
@@ -73,32 +78,3 @@ def user_login(request):
 def logout_view(request):
     logout(request)
     return redirect('user_login')
-
-
-def verify_email(request, token):
-    try:
-        user = CustomUser.objects.get(profile__verification_token=token)
-        user.verified = True
-        user.profile.verification_token = None  # Clear the token after verification
-        user.save()
-        messages.success(request, "Your email has been verified!")
-        return redirect('login')
-    except CustomUser.DoesNotExist:
-        messages.error(request, "Invalid or expired verification link.")
-        return redirect('login')
-
-
-def activate(request, uidb64, token):
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = CustomUser.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
-        user = None
-
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-        return redirect('home')
-    else:
-        return HttpResponse('Activation link is invalid!')
