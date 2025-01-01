@@ -1,0 +1,19 @@
+{% extends 'home.html' %}
+
+{% block title %}Hotel Dashboard{% endblock %}
+
+{% block content %}
+  <h1>Your Hotels</h1>
+  {% if hotels %}
+    <ul>
+      {% for hotel in hotels %}
+        <li>
+          <a href="{% url 'hotel_detail' hotel.id %}">{{ hotel.name }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You have no hotels yet.</p>
+  {% endif %}
+  <a href="{% url 'create_hotel' %}">Create New Hotel</a>
+{% endblock %}

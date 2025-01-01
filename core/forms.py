@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Hotel
+from .models import User, Hotel, Room, Booking
 
 class UserRegistrationForm(forms.ModelForm):
   """
@@ -45,3 +45,43 @@ class HotelRegistrationForm(forms.ModelForm):
   def __init__(self, *args, **kwargs):
     super(HotelRegistrationForm, self).__init__(*args, **kwargs)
     self.fields['amenities'].widget = forms.CheckboxSelectMultiple()
+
+
+class RoomForm(forms.ModelForm):
+    """
+    Form for creating and editing rooms.
+    """
+
+    class Meta:
+        model = Room
+        fields = ('room_type', 'price', 'availability', 'description', 'images')
+
+
+class BookingForm(forms.ModelForm):
+    """
+    Form for creating a booking.
+    """
+
+    class Meta:
+        model = Booking
+        fields = ('room', 'check_in_date', 'check_out_date', 'number_of_guests')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        check_in_date = cleaned_data.get('check_in_date')
+        check_out_date = cleaned_data.get('check_out_date')
+        room = cleaned_data.get('room')
+
+        if check_in_date >= check_out_date:
+            raise forms.ValidationError("Check-out date must be after check-in date.")
+
+        # Check for room availability (basic implementation)
+        existing_bookings = Booking.objects.filter(
+            room=room,
+            check_in_date__lte=check_out_date,
+            check_out_date__gte=check_in_date
+        )
+        if existing_bookings.exists():
+            raise forms.ValidationError("Room is not available for the selected dates.")
+
+        return cleaned_data

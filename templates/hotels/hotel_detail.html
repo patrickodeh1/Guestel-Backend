@@ -1,0 +1,23 @@
+{% extends 'home.html' %}
+
+{% block title %}{{ hotel.name }}{% endblock %}
+
+{% block content %}
+  <h1>{{ hotel.name }}</h1>
+  <p>{{ hotel.address }}</p>
+  <p>{{ hotel.description }}</p>
+  <img src="{{ hotel.logo.url }}" alt="{{ hotel.name }} Logo" width="200">
+
+  <h2>Rooms</h2>
+  <ul>
+    {% for room in hotel.rooms.all %}
+      <li>
+        {{ room.room_type }} - {{ room.price }}
+        <a href="{% url 'edit_room' hotel.id room.id %}">Edit</a> |
+        <a href="{% url 'delete_room' hotel.id room.id %}">Delete</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <a href="{% url 'create_room' hotel.id %}">Create New Room</a>
+{% endblock %}

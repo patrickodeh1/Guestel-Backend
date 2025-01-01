@@ -1,9 +1,71 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Hostify - Home</title>
+  <title>Hostify - {% block title %}{% endblock %}</title>
 </head>
 <body>
-  <h1>Welcome to Hostify!</h1>
+  <header>
+    <h1>Hostify</h1>
+    <h2>Welcome to Hostify</h2>
+    <nav>
+      <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'login' %}">Login</a></li>
+        <li><a href="{% url 'register' %}">Register</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% endif %}
+        </ul>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}
+    <h2>Find Your Perfect Stay</h2>
+
+    <form method="get">
+      <div>
+        <label for="min_price">Min Price:</label>
+        <input type="number" id="min_price" name="min_price" min="0">
+      </div>
+      <div>
+        <label for="max_price">Max Price:</label>
+        <input type="number" id="max_price" name="max_price" min="0">
+      </div>
+      <div>
+        <label for="amenities">Amenities:</label>
+        {% for amenity in amenities %}
+          <input type="checkbox" id="amenity_{{ amenity.id }}" name="amenities" value="{{ amenity.id }}">
+          <label for="amenity_{{ amenity.id }}">{{ amenity.name }}</label><br>
+        {% endfor %}
+      </div>
+      <div>
+        <label for="min_rating">Min Rating:</label>
+        <select id="min_rating" name="min_rating">
+          <option value="">Any</option>
+          <option value="1">1 Star</option>
+          <option value="2">2 Stars</option>
+          <option value="3">3 Stars</option>
+          <option value="4">4 Stars</option>
+          <option value="5">5 Stars</option>
+        </select>
+      </div>
+      <button type="submit">Search</button>
+    </form>
+
+    <h2>Available Hotels</h2>
+    <ul>
+      {% for hotel in hotels %}
+        <li>
+          {{ hotel.name }} - {{ hotel.address }}
+        </li>
+      {% endfor %}
+    </ul>
+    {% endblock %}
+  </main>
+
+  <footer>
+    <p>&copy; Hostify 2025</p>
+  </footer>
 </body>
 </html>
