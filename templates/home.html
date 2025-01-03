@@ -26,13 +26,15 @@
     {% block content %}
       <h2>Find Your Perfect Stay</h2>
 
-      <form method="get">
-        <div class="search-bar">
-          <label for="hotel_name">Search by Hotel Name:</label>
-          <input type="text" id="hotel_name" name="hotel_name" placeholder="Enter hotel name">
-          <button type="submit">Search</button>
-        </div>
-      </form>
+      {% if user.is_authenticated %}
+        <form method="get">
+          <div class="search-bar">
+            <label for="hotel_name">Search by Hotel Name:</label>
+            <input type="text" id="hotel_name" name="hotel_name" placeholder="Enter hotel name">
+            <button type="submit">Search</button>
+          </div>
+        </form>
+        {% endif %}
 
       {% if user.is_authenticated %}
       <h2>Available Hotels</h2>
