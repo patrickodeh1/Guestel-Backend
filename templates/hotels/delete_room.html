@@ -1,0 +1,13 @@
+{% extends 'home.html' %}
+
+{% block title %}Confirm Delete Room{% endblock %}
+
+{% block content %}
+  <h1>Confirm Delete Room</h1>
+  <p>Are you sure you want to delete the room: {{ room.room_type }}?</p>
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete Room</button>
+    <a href="{% url 'hotel_detail' pk=hotel.id %}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock %}

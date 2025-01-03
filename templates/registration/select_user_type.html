@@ -1,0 +1,16 @@
+{% extends 'home.html' %}
+
+{% block title %}Select User Type{% endblock %}
+
+{% block content %}
+  <h1>Select User Type</h1>
+  <form method="get" action="{% url 'register' %}">
+    <div>
+      <input type="radio" id="user" name="user_type" value="user" checked>
+      <label for="user">User</label><br>
+      <input type="radio" id="hotel_owner" name="user_type" value="hotel_owner">
+      <label for="hotel_owner">Hotel Owner</label><br>
+    </div>
+    <button type="submit">Next</button>
+  </form>
+{% endblock %}

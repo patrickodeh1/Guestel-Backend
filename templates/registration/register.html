@@ -3,11 +3,21 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-  <h1>Register</h1>
-  <form method="post">
+<h1>Register</h1>
+<form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    <div>
+        <input type="radio" id="user" name="user_type" value="user" {% if user_type == 'user' %}checked{% endif %}>
+        <label for="user">User</label><br>
+        <input type="radio" id="hotel_owner" name="user_type" value="hotel_owner" {% if user_type == 'hotel_owner' %}checked{% endif %}>
+        <label for="hotel_owner">Hotel Owner</label><br>
+    </div>
+
+    {% if user_type == 'hotel_owner' %}
+        {{ form.as_p }}
+    {% endif %}
+
     <button type="submit">Register</button>
-  </form>
-  <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+</form>
+<p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
 {% endblock %}

@@ -1,23 +1,47 @@
 {% extends 'home.html' %}
 
-{% block title %}{{ hotel.name }}{% endblock %}
+{% block title %}Hotel Details{% endblock %}
 
 {% block content %}
   <h1>{{ hotel.name }}</h1>
   <p>{{ hotel.address }}</p>
   <p>{{ hotel.description }}</p>
-  <img src="{{ hotel.logo.url }}" alt="{{ hotel.name }} Logo" width="200">
+  <p>{{ hotel.phone_number }}</p>
+  <p>{{ hotel.email }}</p>
+
+  <h2>Amenities</h2>
+  <ul>
+    {% for amenity in hotel.amenities.all %}
+      <li>{{ amenity.name }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Hotel Front View</h2>
+  {% if hotel.photo %}
+    <img src="{{ hotel.photo.url }}" alt="Hotel Photo" style="max-width: 300px;">
+  {% else %}
+    <p>No photo available for this hotel.</p>
+  {% endif %}
 
   <h2>Rooms</h2>
   <ul>
     {% for room in hotel.rooms.all %}
       <li>
-        {{ room.room_type }} - {{ room.price }}
-        <a href="{% url 'edit_room' hotel.id room.id %}">Edit</a> |
-        <a href="{% url 'delete_room' hotel.id room.id %}">Delete</a>
+        {{ room.room_type }} - ${{ room.price }}
+        {% if room.images %}
+          <img src="{{ room.images.url }}" alt="{{ room.room_type }}" style="max-width: 100px;">
+        {% else %}
+          <p>No image available for this room.</p>
+        {% endif %}
+        <a href="{% url 'edit_room' hotel.id room.id %}" class="btn btn-primary">Edit Room</a>
+        <a href="{% url 'delete_room' hotel.id room.id %}" class="btn btn-primary">Delete Room</a>
       </li>
     {% endfor %}
   </ul>
 
-  <a href="{% url 'create_room' hotel.id %}">Create New Room</a>
+  <div>
+    <a href="{% url 'create_room' hotel.id %}" class="btn btn-primary">Create Room</a>
+    <a href="{% url 'owner_hotel_edit' hotel.id %}" class="btn btn-primary">Edit Hotel</a>
+    <a href="{% url 'owner_hotel_delete' hotel.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this hotel?');">Delete Hotel</a>
+  </div>
 {% endblock %}

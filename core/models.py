@@ -6,6 +6,7 @@ User Model: Extends AbstractUser to include is_hotel_owner field.
 """
 class User(AbstractUser):
     is_hotel_owner = models.BooleanField(default=False) 
+    username = models.CharField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=20, unique=True) 
@@ -35,37 +36,28 @@ class Amenity(models.Model):
     def __str__(self):
         return self.name
 
-"""
-Hotel Photo Model: Stores images related to a hotel.
-"""
-class HotelPhoto(models.Model):
-    hotel = models.ForeignKey('Hotel', on_delete=models.CASCADE) 
-    image = models.ImageField(upload_to='hotel_photos/') 
 
 """
 Hotel Model: Represents a hotel with its details, photos, and owner.
 """
 class Hotel(models.Model):
-    name = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
-    description = models.TextField()
-    logo = models.ImageField(upload_to='hotel_logos/', blank=True) 
+    name = models.CharField(
+        max_length=255,
+        help_text="Enter the name of the hotel (e.g., Grand Plaza Hotel).")
+    address = models.CharField(
+        max_length=255,
+        help_text="Hotel Address.")
+    description = models.TextField(
+        help_text="Enter hotel description")
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owned_hotels')
-    amenities = models.ManyToManyField(Amenity) 
-    photos = models.ManyToManyField(HotelPhoto, blank=True, related_name='hotels') 
+    photo = models.ImageField(upload_to='hotel_photos/', blank=True, help_text="Upload a photo of your hotel")
+    amenities = models.ManyToManyField(Amenity)
     rating = models.DecimalField(max_digits=2, decimal_places=1, null=True, blank=True) 
     phone_number = models.CharField(max_length=20, unique=True) 
     email = models.EmailField(unique=True)
 
     def __str__(self):
         return self.name
-
-"""
-Room Image Model: Stores images for individual rooms.
-"""
-class RoomImage(models.Model):
-    room = models.ForeignKey('Room', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='room_photos/')
 
 """
 Room Model: Represents a room within a hotel.
@@ -76,7 +68,7 @@ class Room(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2) 
     availability = models.BooleanField(default=True) 
     description = models.TextField(blank=True)
-    images = models.ManyToManyField(RoomImage, blank=True, related_name='rooms')
+    images = models.ImageField(upload_to='hotel_photos/', blank=True, help_text="Upload a photo of your hotel")
 
     def __str__(self):
         return f"{self.hotel.name} - {self.room_type}"

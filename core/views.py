@@ -1,22 +1,48 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, RoomForm, HotelRegistrationForm, BookingForm
+from .forms import UserRegistrationForm, RoomForm, HotelRegistrationForm, BookingForm, HotelOwnerRegistrationForm
 from .models import User, Hotel, Room, Amenity
+from django.contrib import messages
+
+USER_TYPES = {
+    'user': UserRegistrationForm,
+    'hotel_owner': HotelOwnerRegistrationForm,
+}
+
+def select_user_type(request):
+    """
+    Step 1: User selects their type.
+    """
+    return render(request, 'registration/select_user_type.html')
+
 
 def register(request):
-  """
-  Handles user registration.
-  """
-  if request.method == 'POST':
-    form = UserRegistrationForm(request.POST)
-    if form.is_valid():
-      user = form.save()
-      login(request, user)  # Log in the newly registered user
-      return redirect('home')  # Redirect to the home page after successful registration
-  else:
-    form = UserRegistrationForm()
-  return render(request, 'registration/register.html', {'form': form})
+    user_type = request.GET.get('user_type', 'user')
+
+    if request.method == 'POST':
+        if user_type == 'hotel_owner':
+            form = HotelOwnerRegistrationForm(request.POST)
+            if form.is_valid():
+                hotel_owner = form.save()
+                login(request, hotel_owner)
+                messages.success(request, "Hotel Owner account created successfully!")
+                return redirect('home')
+            else:
+                messages.error(request, "Registration failed. Please check the form.")
+        else:
+            messages.error(request, "Invalid user type.")
+    else:
+        form = HotelOwnerRegistrationForm() if user_type == 'hotel_owner' else None
+
+    return render(
+        request,
+        'registration/register.html',
+        {
+            'form': form,
+            'user_type': user_type,
+        }
+    )
 
 def login_user(request):
   """
@@ -37,20 +63,20 @@ def login_user(request):
     return render(request, 'registration/login.html')
 
 @login_required
-def create_hotel_profile(request):
-  """
-  Handles hotel profile creation for authenticated hotel owners.
-  """
-  if request.method == 'POST':
-    form = HotelRegistrationForm(request.POST, request.FILES)  # Handle file uploads
-    if form.is_valid():
-      hotel = form.save(commit=False)  # Don't save yet, associate with user
-      hotel.owner = request.user  # Set the current user as the hotel owner
-      hotel.save()
-      return redirect('home')  # Redirect to the home page after successful creation
-  else:
-    form = HotelRegistrationForm()
-  return render(request, 'hotels/create_profile.html', {'form': form})
+def create_hotel(request):
+    if request.method == 'POST':
+        form = HotelRegistrationForm(request.POST, request.FILES)
+        if form.is_valid():
+            hotel = form.save(commit=False)
+            hotel.owner = request.user
+            hotel.photo = request.FILES['photo']
+            hotel.save()
+
+            return redirect('hotel_dashboard')
+    else:
+        form = HotelRegistrationForm()
+
+    return render(request, 'hotels/create_hotel.html', {'form': form})
 
 def home(request):
     """
@@ -81,63 +107,66 @@ def home(request):
 
 @login_required
 def hotel_dashboard(request):
-    """
-    Displays the hotel owner's dashboard.
-    """
-    hotel_owner = request.user 
-    hotels = Hotel.objects.filter(owner=hotel_owner)
-    return render(request, 'hotels/dashboard.html', {'hotels': hotels})
+    if request.user.is_hotel_owner: 
+        hotels = Hotel.objects.filter(owner=request.user) 
+        return render(request, 'hotels/dashboard.html', {'hotels': hotels})
+    else:
+        return redirect('home')
 
 @login_required
-def hotel_detail(request, hotel_id):
+def hotel_detail(request, pk):
     """
     Displays details of a specific hotel.
     """
-    hotel = get_object_or_404(Hotel, id=hotel_id, owner=request.user) 
+    hotel = get_object_or_404(Hotel, id=pk, owner=request.user) 
     return render(request, 'hotels/hotel_detail.html', {'hotel': hotel})
 
 @login_required
-def create_room(request, hotel_id):
+def create_room(request, pk):
     """
     Handles room creation for a specific hotel.
     """
-    hotel = get_object_or_404(Hotel, id=hotel_id, owner=request.user) 
+    hotel = get_object_or_404(Hotel, id=pk, owner=request.user) 
     if request.method == 'POST':
         form = RoomForm(request.POST, request.FILES)
         if form.is_valid():
             room = form.save(commit=False)
-            room.hotel = hotel 
+            room.hotel = hotel
             room.save()
-            return redirect('hotel_detail', hotel_id=hotel_id) 
+            return redirect('hotel_detail', pk=pk) 
     else:
         form = RoomForm()
     return render(request, 'hotels/create_room.html', {'form': form, 'hotel': hotel})
 
 @login_required
-def edit_room(request, hotel_id, room_id):
+def edit_room(request, pk, room_id):
     """
     Handles room editing for a specific hotel.
     """
-    hotel = get_object_or_404(Hotel, id=hotel_id, owner=request.user)
+    hotel = get_object_or_404(Hotel, id=pk, owner=request.user)
     room = get_object_or_404(Room, id=room_id, hotel=hotel) 
     if request.method == 'POST':
         form = RoomForm(request.POST, request.FILES, instance=room)
         if form.is_valid():
             form.save()
-            return redirect('hotel_detail', hotel_id=hotel_id)
+            return redirect('hotel_detail', pk=pk)
     else:
         form = RoomForm(instance=room)
     return render(request, 'hotels/edit_room.html', {'form': form, 'hotel': hotel})
 
 @login_required
-def delete_room(request, hotel_id, room_id):
+def delete_room(request, pk, room_id):
     """
-    Handles room deletion for a specific hotel.
+    Handles room deletion for a specific hotel with a confirmation step.
     """
-    hotel = get_object_or_404(Hotel, id=hotel_id, owner=request.user)
+    hotel = get_object_or_404(Hotel, id=pk, owner=request.user)
     room = get_object_or_404(Room, id=room_id, hotel=hotel)
-    room.delete()
-    return redirect('hotel_detail', hotel_id=hotel_id)
+
+    if request.method == 'POST':
+        room.delete()
+        return redirect('hotel_detail', pk=pk)
+    else:
+        return render(request, 'hotels/delete_room.html', {'hotel': hotel, 'room': room})
 
 @login_required
 def book_room(request, hotel_id, room_id):
@@ -174,3 +203,25 @@ def logout_user(request):
     """
     logout(request)
     return redirect('home') 
+
+
+@login_required
+def owner_hotel_edit(request, pk):
+    hotel = get_object_or_404(Hotel, pk=pk)
+    if request.method == 'POST':
+        form = HotelRegistrationForm(request.POST, request.FILES, instance=hotel)
+        if form.is_valid():
+            form.save()
+            return redirect('hotel_detail', pk=hotel.pk)
+    else:
+        form = HotelRegistrationForm(instance=hotel)
+    return render(request, 'hotels/edit_hotel.html', {'form': form, 'hotel': hotel})
+
+
+def owner_hotel_delete(request, pk):
+    hotel = get_object_or_404(Hotel, pk=pk)
+    if request.method == 'POST':
+        hotel.delete()
+        return redirect('home')
+    else:
+        return render(request, 'hotels/confirm_delete.html', {'hotel': hotel})

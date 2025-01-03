@@ -1,66 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Hostify - {% block title %}{% endblock %}</title>
+  <title>Hostify - {% block title %}Home{% endblock %}</title> 
 </head>
 <body>
   <header>
     <h1>Hostify</h1>
-    <h2>Welcome to Hostify</h2>
     <nav>
       <ul>
-        <li><a href="{% url 'home' %}">Home</a></li>
-        <li><a href="{% url 'login' %}">Login</a></li>
-        <li><a href="{% url 'register' %}">Register</a></li>
+        <li><a href="{% url 'home' %}">Homepage</a></li>
         {% if user.is_authenticated %}
           <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% if user.is_hotel_owner %} 
+            <li><a href="{% url 'hotel_dashboard' %}">Dashboard</a></li> 
+          {% endif %}
+        {% else %}
+          <li><a href="{% url 'login' %}">Login</a></li>
+          <li><a href="{% url 'select_user_type' %}">Register</a></li>
         {% endif %}
-        </ul>
+      </ul>
     </nav>
   </header>
 
   <main>
     {% block content %}
-    <h2>Find Your Perfect Stay</h2>
+      <h2>Find Your Perfect Stay</h2>
 
-    <form method="get">
-      <div>
-        <label for="min_price">Min Price:</label>
-        <input type="number" id="min_price" name="min_price" min="0">
-      </div>
-      <div>
-        <label for="max_price">Max Price:</label>
-        <input type="number" id="max_price" name="max_price" min="0">
-      </div>
-      <div>
-        <label for="amenities">Amenities:</label>
-        {% for amenity in amenities %}
-          <input type="checkbox" id="amenity_{{ amenity.id }}" name="amenities" value="{{ amenity.id }}">
-          <label for="amenity_{{ amenity.id }}">{{ amenity.name }}</label><br>
-        {% endfor %}
-      </div>
-      <div>
-        <label for="min_rating">Min Rating:</label>
-        <select id="min_rating" name="min_rating">
-          <option value="">Any</option>
-          <option value="1">1 Star</option>
-          <option value="2">2 Stars</option>
-          <option value="3">3 Stars</option>
-          <option value="4">4 Stars</option>
-          <option value="5">5 Stars</option>
-        </select>
-      </div>
-      <button type="submit">Search</button>
-    </form>
+      <form method="get">
+        <div>
+          <label for="min_price">Min Price:</label>
+          <input type="number" id="min_price" name="min_price" min="0">
+        </div>
+        <div>
+          <label for="max_price">Max Price:</label>
+          <input type="number" id="max_price" name="max_price" min="0">
+        </div>
+        <div>
+          <label for="amenities">Amenities:</label>
+          {% for amenity in amenities %}
+            <input type="checkbox" id="amenity_{{ amenity.id }}" name="amenities" value="{{ amenity.id }}">
+            <label for="amenity_{{ amenity.id }}">{{ amenity.name }}</label><br>
+          {% endfor %}
+        </div>
+        <div>
+          <label for="min_rating">Min Rating:</label>
+          <select id="min_rating" name="min_rating">
+            <option value="">Any</option>
+            {% for i in "12345"|make_list %}
+              <option value="{{ i }}" {% if request.GET.min_rating == i %}selected{% endif %}>
+                {{ i }} Star{% if i > 1 %}s{% endif %}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit">Search</button>
+      </form>
 
-    <h2>Available Hotels</h2>
-    <ul>
-      {% for hotel in hotels %}
+      {% if user.is_authenticated %}
+      <h2>Available Hotels</h2>
+      <ul>
+        {% for hotel in hotels %}
         <li>
-          {{ hotel.name }} - {{ hotel.address }}
+          <a href="{% url 'hotel_detail' hotel.id %}">{{ hotel.name }}</a>
         </li>
       {% endfor %}
-    </ul>
+      </ul>
+      {% else %}
+      <p>Register or login to your account to view available hotels</p>
+      {% endif %}
     {% endblock %}
   </main>
 
