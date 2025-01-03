@@ -87,24 +87,31 @@ class BookingForm(forms.ModelForm):
 
     class Meta:
         model = Booking
-        fields = ('room', 'check_in_date', 'check_out_date', 'number_of_guests')
+        fields = ('check_in_date', 'check_out_date', 'number_of_guests')
 
     def clean(self):
         cleaned_data = super().clean()
         check_in_date = cleaned_data.get('check_in_date')
         check_out_date = cleaned_data.get('check_out_date')
-        room = cleaned_data.get('room')
+        room = self.cleaned_data.get('room') 
+
+        if not check_in_date:
+            raise forms.ValidationError("Please select a check-in date.")
+        if not check_out_date:
+            raise forms.ValidationError("Please select a check-out date.")
 
         if check_in_date >= check_out_date:
             raise forms.ValidationError("Check-out date must be after check-in date.")
 
-        # Check for room availability (basic implementation)
-        existing_bookings = Booking.objects.filter(
-            room=room,
-            check_in_date__lte=check_out_date,
-            check_out_date__gte=check_in_date
-        )
-        if existing_bookings.exists():
-            raise forms.ValidationError("Room is not available for the selected dates.")
+        if room: 
+            existing_bookings = Booking.objects.filter(
+                room=room,
+                check_in_date__lte=check_out_date,
+                check_out_date__gte=check_in_date
+            ).exclude(id=self.instance.id if self.instance else None) 
+
+            if existing_bookings.exists():
+                raise forms.ValidationError("Room is not available for the selected dates.")
 
         return cleaned_data
+  

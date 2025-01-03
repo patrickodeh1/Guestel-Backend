@@ -16,10 +16,9 @@ urlpatterns = [
     path('hotels/<int:pk>/rooms/<int:room_id>/edit/', views.edit_room, name='edit_room'), 
     path('hotels/<int:pk>/rooms/<int:room_id>/delete/', views.delete_room, name='delete_room'), 
     path('hotels/<int:hotel_id>/book-room/<int:room_id>/', views.book_room, name='book_room'), 
-    path('booking-success/', views.booking_success, name='booking_success'),
     path('hotel/<int:pk>/edit/', views.owner_hotel_edit, name='owner_hotel_edit'),
     path('hotel/<int:pk>/delete/', views.owner_hotel_delete, name='owner_hotel_delete'),
-
+    path('hotels/<int:hotel_id>/bookings/', views.owner_bookings, name='owner_bookings'),
 ]
 
 if settings.DEBUG:

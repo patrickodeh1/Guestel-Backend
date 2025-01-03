@@ -1,0 +1,23 @@
+{% extends 'home.html' %}
+
+{% block title %}Hotel Bookings{% endblock %}
+
+{% block content %}
+  <h2>Bookings for {{ hotel.name }}</h2>
+
+  {% if bookings %}
+    <ul>
+      {% for booking in bookings %}
+        <li>
+          <strong>Guest:</strong> {{ booking.user.get_full_name }}<br>
+          <strong>Check-in:</strong> {{ booking.check_in_date }}<br>
+          <strong>Check-out:</strong> {{ booking.check_out_date }}<br>
+          <strong>Guests:</strong> {{ booking.number_of_guests }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No bookings found for this hotel.</p>
+  {% endif %}
+
+{% endblock %}

@@ -27,33 +27,11 @@
       <h2>Find Your Perfect Stay</h2>
 
       <form method="get">
-        <div>
-          <label for="min_price">Min Price:</label>
-          <input type="number" id="min_price" name="min_price" min="0">
+        <div class="search-bar">
+          <label for="hotel_name">Search by Hotel Name:</label>
+          <input type="text" id="hotel_name" name="hotel_name" placeholder="Enter hotel name">
+          <button type="submit">Search</button>
         </div>
-        <div>
-          <label for="max_price">Max Price:</label>
-          <input type="number" id="max_price" name="max_price" min="0">
-        </div>
-        <div>
-          <label for="amenities">Amenities:</label>
-          {% for amenity in amenities %}
-            <input type="checkbox" id="amenity_{{ amenity.id }}" name="amenities" value="{{ amenity.id }}">
-            <label for="amenity_{{ amenity.id }}">{{ amenity.name }}</label><br>
-          {% endfor %}
-        </div>
-        <div>
-          <label for="min_rating">Min Rating:</label>
-          <select id="min_rating" name="min_rating">
-            <option value="">Any</option>
-            {% for i in "12345"|make_list %}
-              <option value="{{ i }}" {% if request.GET.min_rating == i %}selected{% endif %}>
-                {{ i }} Star{% if i > 1 %}s{% endif %}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-        <button type="submit">Search</button>
       </form>
 
       {% if user.is_authenticated %}

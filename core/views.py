@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, RoomForm, HotelRegistrationForm, BookingForm, HotelOwnerRegistrationForm
-from .models import User, Hotel, Room, Amenity
+from .models import Hotel, Room, Booking
 from django.contrib import messages
 
 USER_TYPES = {
@@ -79,37 +79,21 @@ def create_hotel(request):
     return render(request, 'hotels/create_hotel.html', {'form': form})
 
 def home(request):
-    """
-    Displays the home page with a list of available hotels.
-    """
-    hotels = Hotel.objects.all()
+  hotels = Hotel.objects.all()  # Get all hotels initially
 
-    # Price Range Filtering
-    min_price = request.GET.get('min_price')
-    max_price = request.GET.get('max_price')
-    if min_price:
-        hotels = hotels.filter(rooms__price__gte=min_price) 
-    if max_price:
-        hotels = hotels.filter(rooms__price__lte=max_price)
+  hotel_name = request.GET.get('hotel_name')
+  if hotel_name:
+    hotels = hotels.filter(name__icontains=hotel_name)  # Filter by name (case-insensitive)
 
-    # Amenities Filtering
-    amenity_ids = request.GET.getlist('amenities') 
-    if amenity_ids:
-        hotels = hotels.filter(amenities__in=amenity_ids)
-
-    # Star Rating Filtering (assuming you have a rating field in Hotel model)
-    min_rating = request.GET.get('min_rating')
-    if min_rating:
-        hotels = hotels.filter(rating__gte=min_rating) 
-
-    return render(request, 'home.html', {'hotels': hotels, 'amenities': Amenity.objects.all()})
+  return render(request, 'home.html', {'hotels': hotels})
 
 
 @login_required
 def hotel_dashboard(request):
-    if request.user.is_hotel_owner: 
-        hotels = Hotel.objects.filter(owner=request.user) 
-        return render(request, 'hotels/dashboard.html', {'hotels': hotels})
+    if request.user.is_hotel_owner:
+        hotels = Hotel.objects.filter(owner=request.user)
+        hotel_id = request.GET.get('hotel_id')  # Assuming you have the hotel ID from a form or query string
+        return render(request, 'hotels/dashboard.html', {'hotels': hotels, 'hotel_id': hotel_id})
     else:
         return redirect('home')
 
@@ -118,7 +102,7 @@ def hotel_detail(request, pk):
     """
     Displays details of a specific hotel.
     """
-    hotel = get_object_or_404(Hotel, id=pk, owner=request.user) 
+    hotel = get_object_or_404(Hotel, pk=pk) 
     return render(request, 'hotels/hotel_detail.html', {'hotel': hotel})
 
 @login_required
@@ -180,21 +164,25 @@ def book_room(request, hotel_id, room_id):
         form = BookingForm(request.POST)
         if form.is_valid():
             booking = form.save(commit=False)
-            booking.user = request.user 
+            booking.user = request.user
             booking.room = room
             booking.save()
-            return redirect('booking_success')  # Redirect to success page
+            return render(request, 'hotels/book_room.html', {'hotel': hotel, 'room': room, 'form': form, 'success_message': 'Your room has been booked successfully!'})
     else:
-        form = BookingForm(initial={'room': room}) 
+        form = BookingForm(initial={'room': room})
 
     return render(request, 'hotels/book_room.html', {'hotel': hotel, 'room': room, 'form': form})
 
-@login_required
-def booking_success(request):
+
+def owner_bookings(request, hotel_id):
     """
-    Displays a success message after a successful booking.
+    Displays a list of bookings for the specified hotel owner.
     """
-    return render(request, 'hotels/booking_success.html')
+    hotel = get_object_or_404(Hotel, id=hotel_id, owner=request.user) 
+    bookings = Booking.objects.filter(room__hotel=hotel).order_by('-check_in_date')
+
+    return render(request, 'hotels/owner_bookings.html', {'hotel': hotel, 'bookings': bookings})
+
 
 @login_required
 def logout_user(request):
