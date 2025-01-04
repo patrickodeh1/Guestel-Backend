@@ -4,9 +4,27 @@
 
 {% block content %}
   <h1>Edit Room for {{ hotel.name }}</h1>
+
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save Changes</button>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
   </form>
+
+<style>
+  .btn {
+    padding: 10px 15px; /* Adjust padding as needed */
+    background-color: #007bff; 
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    text-decoration: none; 
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background-color: #007bff; 
+  }
+</style>
+
 {% endblock %}
