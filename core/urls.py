@@ -19,6 +19,7 @@ urlpatterns = [
     path('hotel/<int:pk>/edit/', views.owner_hotel_edit, name='owner_hotel_edit'),
     path('hotel/<int:pk>/delete/', views.owner_hotel_delete, name='owner_hotel_delete'),
     path('hotels/<int:hotel_id>/bookings/', views.owner_bookings, name='owner_bookings'),
+    path('hotels/<int:pk>/add_review/', views.add_review, name='add_review'),
 ]
 
 if settings.DEBUG:

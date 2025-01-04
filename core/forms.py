@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import User, Hotel, Room, Booking, Amenity
+from .models import User, Hotel, Room, Booking, Review
 from django.contrib.auth.forms import UserCreationForm
 
 
@@ -114,4 +114,9 @@ class BookingForm(forms.ModelForm):
                 raise forms.ValidationError("Room is not available for the selected dates.")
 
         return cleaned_data
-  
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['rating', 'comment']

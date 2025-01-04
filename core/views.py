@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, RoomForm, HotelRegistrationForm, BookingForm, HotelOwnerRegistrationForm
+from .forms import UserRegistrationForm, RoomForm, HotelRegistrationForm, BookingForm, HotelOwnerRegistrationForm, ReviewForm
 from .models import Hotel, Room, Booking
 from django.contrib import messages
 
@@ -103,6 +103,7 @@ def hotel_detail(request, pk):
     Displays details of a specific hotel.
     """
     hotel = get_object_or_404(Hotel, pk=pk) 
+    reviews = hotel.review_set.all()
     return render(request, 'hotels/hotel_detail.html', {'hotel': hotel})
 
 @login_required
@@ -213,3 +214,21 @@ def owner_hotel_delete(request, pk):
         return redirect('home')
     else:
         return render(request, 'hotels/confirm_delete.html', {'hotel': hotel})
+
+
+@login_required
+def add_review(request, pk):
+    hotel = get_object_or_404(Hotel, id=pk)
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            review.hotel = hotel
+            review.save()
+            return redirect('hotel_detail', pk=hotel.pk)  # Redirect to hotel detail page
+    else:
+        form = ReviewForm()
+
+    return render(request, 'hotels/add_review.html', {'hotel': hotel, 'form': form})

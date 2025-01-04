@@ -14,6 +14,16 @@
     {% endfor %}
   </ul>
 
+  <h2>Reviews</h2>
+<ul>
+  {% for review in hotel.review_set.all %}
+    <li>
+      <b>{{ review.user.username }}</b> - {{ review.rating }} stars<br>
+      {{ review.comment }}
+    </li>
+  {% endfor %}
+</ul>
+
   <h2>Hotel Front View</h2>
   {% if hotel.photo %}
     <img src="{{ hotel.photo.url }}" alt="Hotel Photo" style="max-width: 300px;">
@@ -32,6 +42,7 @@
           <p>No image available for this room.</p>
         {% endif %}
         <a href="{% url 'book_room' hotel.id room.id %}" class="btn btn-primary">Book Room</a>
+        <a href="{% url 'add_review' hotel.id %}" class="btn btn-primary">Review this Hotel</a>
         {% if request.user.is_authenticated and request.user == hotel.owner %}
           <a href="{% url 'edit_room' hotel.id room.id %}" class="btn btn-primary">Edit Room</a>
           <a href="{% url 'delete_room' hotel.id room.id %}" class="btn btn-primary">Delete Room</a>
