@@ -23,17 +23,25 @@ def register(request):
     if request.method == 'POST':
         if user_type == 'hotel_owner':
             form = HotelOwnerRegistrationForm(request.POST)
-            if form.is_valid():
-                hotel_owner = form.save()
-                login(request, hotel_owner)
-                messages.success(request, "Hotel Owner account created successfully!")
-                return redirect('home')
-            else:
-                messages.error(request, "Registration failed. Please check the form.")
+        elif user_type == 'user':
+            form = UserRegistrationForm(request.POST)
         else:
-            messages.error(request, "Invalid user type.")
+            form = None
+
+        if form and form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, f"{user_type.replace('_', ' ').capitalize()} account created successfully!")
+            return redirect('home')
+        else:
+            messages.error(request, "Registration failed. Please check the form.")
     else:
-        form = HotelOwnerRegistrationForm() if user_type == 'hotel_owner' else None
+        if user_type == 'hotel_owner':
+            form = HotelOwnerRegistrationForm()
+        elif user_type == 'user':
+            form = UserRegistrationForm()
+        else:
+            form = None
 
     return render(
         request,

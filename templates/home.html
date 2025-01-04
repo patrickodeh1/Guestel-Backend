@@ -1,12 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Hostify - {% block title %}Home{% endblock %}</title> 
+  <title>Hostify - {% block title %}Home{% endblock %}</title>
+  {% block styles %}
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4; /* Light gray background */
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .search-bar {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .search-bar input[type="text"] {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .search-bar button {
+      padding: 10px 20px;
+      background-color: #007bff; 
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .hotel-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .hotel-card {
+      width: 25%;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .hotel-card img {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 10px; 
+    }
+
+    .hotel-card h3 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .hotel-card a {
+      text-decoration: none;
+      color: #007bff; 
+    }
+  </style>
+  {% endblock %}
 </head>
 <body>
   <header>
+    {% block header %}
     <h1>Hostify</h1>
-    <nav>
+    <nav> 
       <ul>
         <li><a href="{% url 'home' %}">Homepage</a></li>
         {% if user.is_authenticated %}
@@ -20,39 +93,40 @@
         {% endif %}
       </ul>
     </nav>
+    {% endblock %}
   </header>
 
-  <main>
+  <main class="container">
     {% block content %}
-      <h2>Find Your Perfect Stay</h2>
+    <h2>Find Your Perfect Stay</h2>
 
-      {% if user.is_authenticated %}
-        <form method="get">
-          <div class="search-bar">
-            <label for="hotel_name">Search by Hotel Name:</label>
-            <input type="text" id="hotel_name" name="hotel_name" placeholder="Enter hotel name">
-            <button type="submit">Search</button>
-          </div>
-        </form>
-        {% endif %}
+    {% if user.is_authenticated %}
+      <form method="get" class="search-bar">
+        <input type="text" id="hotel_name" name="hotel_name" placeholder="Search by Hotel Name">
+        <button type="submit">Search</button>
+      </form>
+    {% endif %}
 
-      {% if user.is_authenticated %}
+    {% if user.is_authenticated %}
       <h2>Available Hotels</h2>
-      <ul>
+      <div class="hotel-list">
         {% for hotel in hotels %}
-        <li>
-          <a href="{% url 'hotel_detail' hotel.id %}">{{ hotel.name }}</a>
-        </li>
-      {% endfor %}
-      </ul>
-      {% else %}
+          <div class="hotel-card">
+            <img src="{{ hotel.photo.url }}" alt="{{ hotel.name }}">
+            <h3><a href="{% url 'hotel_detail' hotel.id %}">{{ hotel.name }}</a></h3> 
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
       <p>Register or login to your account to view available hotels</p>
-      {% endif %}
+    {% endif %}
     {% endblock %}
   </main>
 
   <footer>
+    {% block footer %}
     <p>&copy; Hostify 2025</p>
+    {% endblock %}
   </footer>
 </body>
 </html>
