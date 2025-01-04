@@ -82,7 +82,7 @@ class Booking(models.Model):
     check_in_date = models.DateField()
     check_out_date = models.DateField()
     number_of_guests = models.IntegerField()
-    status = models.CharField(max_length=20, default='Pending') 
+    status = models.CharField(max_length=20, default='Pending')
 
 """
 Review Model: Allows users to leave reviews for hotels.
