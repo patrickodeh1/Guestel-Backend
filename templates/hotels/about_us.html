@@ -1,0 +1,24 @@
+{% extends 'home.html' %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+  <h1>About Us</h1>
+  <p>Welcome to Hostify, your premier hotel booking platform. We strive to provide an exceptional experience for travelers by connecting them with the best accommodations around the world.</p>
+
+  <h2>Our Mission</h2>
+  <p>Our mission is to simplify the hotel booking process and make it accessible to everyone. We aim to offer a wide variety of options to suit all travel needs.</p>
+
+  <h2>Our Vision</h2>
+  <p>We envision a world where finding and booking hotels is effortless and seamless. Our platform is designed to empower travelers with the tools they need to make informed decisions.</p>
+
+  <h2>Our Values</h2>
+  <ul>
+    <li>Customer First: We prioritize the needs and satisfaction of our customers.</li>
+    <li>Innovation: We continuously strive to improve and innovate our services.</li>
+    <li>Integrity: We uphold the highest standards of honesty and transparency.</li>
+  </ul>
+
+  <h2>Terms & Conditions</h2>
+  <p>Please read our Terms & Conditions carefully before using our services. By using Hostify, you agree to abide by these terms. For more details, visit our <a href="{% url 'terms_and_conditions' %}">Terms & Conditions</a> page.</p>
+{% endblock %}

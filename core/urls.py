@@ -20,6 +20,10 @@ urlpatterns = [
     path('hotel/<int:pk>/delete/', views.owner_hotel_delete, name='owner_hotel_delete'),
     path('hotels/<int:hotel_id>/bookings/', views.owner_bookings, name='owner_bookings'),
     path('hotels/<int:pk>/add_review/', views.add_review, name='add_review'),
+    path('hotels/about-us/', views.about_us, name='about_us'),
+    path('hotels/contact-us/', views.contact_us, name='contact_us'),
+    path('hotels/privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('hotels/terms-and-conditions/', views.terms_and_conditions, name='terms_and_conditions'),
 ]
 
 if settings.DEBUG:

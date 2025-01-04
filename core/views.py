@@ -240,3 +240,28 @@ def add_review(request, pk):
         form = ReviewForm()
 
     return render(request, 'hotels/add_review.html', {'hotel': hotel, 'form': form})
+
+
+def about_us(request):
+    """
+    View for the About Us page.
+    """
+    return render(request, 'hotels/about_us.html', {})
+
+def contact_us(request):
+    """
+    View for the Contact Us page.
+    """
+    return render(request, 'hotels/contact_us.html', {})
+
+def privacy_policy(request):
+    """
+    View for the Privacy Policy page.
+    """
+    return render(request, 'hotels/privacy_policy.html', {})
+
+def terms_and_conditions(request):
+    """
+    View for the Terms and Conditions page.
+    """
+    return render(request, 'hotels/terms_and_conditions.html', {})
