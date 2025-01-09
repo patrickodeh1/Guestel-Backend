@@ -35,6 +35,10 @@
     python manage.py runserver
     Access the application at http://127.0.0.1:8000/.
 
+### Alternatively
+The site is deployed using render
+visit: https://hostify-1uzn.onrender.com
+
 ### Contributing
 Contributions are welcome! If you would like to contribute to the development of Hostify, follow these steps:
 
