@@ -1,56 +1,55 @@
-# Hostify
+# Guestel
 
-**ALX Portfolio Project**: Hostify is a platform designed to simplify hotel booking services, focusing on streamlined setup, management, and monitoring. It offers an intuitive user interface for customers and efficient backend management for hoteliers, providing a seamless experience in booking and managing hotel reservations.
+Guestel is a rental and property management platform developed as an API-first solution. It Property owners (Hosts) to list homes, hotels, and shortlets apartment, while Guests can discover, verify, and book rentals securely. Payments are handled via escrow, ensuring trust between both parties.
 
-## Features
-- **Django-powered backend**: Robust backend development using the Django framework for handling business logic, user authentication, and database management.
-- **SQLite database integration**: Lightweight, serverless, and self-contained database for easy data storage and retrieval.
-- **User-friendly Interface**: Customers can easily search for available rooms, view hotel details, and complete bookings. Hoteliers can manage room availability, pricing, and customer reservations.
-- **Booking Management**: Hoteliers can manage bookings, view customer information, and update room availability and prices.
-- **Responsive Design**: A mobile-friendly interface that adapts to different screen sizes, ensuring usability across all devices.
+##  Features
 
-## Installation
+### Guests
 
-### Prerequisites
-- Python 3.x
-- SQLite (pre-configured, no setup required)
-- Django 3.x or higher
+- Register with email + phone verification.
 
-### Steps
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/patrickodeh1/Hostify.git
-   cd Hostify
+- Browse available properties by location, type, duration, and amenities.
 
-2. Create a virtual environment and install dependencies:
-    ```bash
-    python3 -m venv env
-    source env/bin/activate
-    pip install -r requirements.txt
+- Bookmark or wishlist properties.
 
-3. Apply migrations and run the server:
-    ```bash
-    python manage.py makemigrations
-    python manage.py migrate
-    python manage.py runserver
-    Access the application at http://127.0.0.1:8000/.
+- Maintain a profile with rental history (current rentals and previous rentals).
+
+- Submit identity documents for verification (required before booking).
 
 
-### Contributing
-Contributions are welcome! If you would like to contribute to the development of Hostify, follow these steps:
+### Hosts / Property owners
 
-- Fork the repository
-- Make your changes
-- Submit a pull request with a detailed description of your changes
+- Register with email + phone verification.
 
-### Author
-Patrick Odeh
-Solo Developer and Backend Engineer behind Hostify
+- Complete identity and property verification before properties can be listed.
 
-### Appreciation
-A heartfelt thank you to:
+- Manage multiple properties (homes, hotels, shortlets).
 
-- God for providing me with strength and wisdom throughout the development process.
-- ALX staff and students who have been incredibly supportive, providing valuable insights and guidance throughout my learning journey.
+- Add details: type, location, pricing, room options (for hotels), photos, videos, amenities.
 
-I’ve learned a great deal from this project and am excited to continue growing and improving in software development.
+- Track bookings and guest interactions.
+
+### General Platform Features
+
+- Payment gateway.
+
+- Phone and email verification for all users.
+
+- Flexible verification (ID APIs, facial verification, property ownership checks).
+
+- Location-based property search & discovery.
+
+## Tech Stack
+
+- Backend: Django REST Framework
+
+- Database: PostgreSQL
+
+- Payments: Paystack API
+
+- Authentication: Email + Phone verification
+
+- API Documentation: Postman Collection
+
+- Deployment: (to be added once finalized)
+
