@@ -53,3 +53,6 @@ Guestel is a rental and property management platform developed as an API-first s
 
 - Deployment: (to be added once finalized)
 
+## Flow Diagram
+
+![Flow Diagram](flow.png)
