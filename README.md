@@ -1,6 +1,6 @@
 # Guestel
 
-Guestel is a rental and property management platform developed as an API-first solution. It Property owners (Hosts) to list homes, hotels, and shortlets apartment, while Guests can discover, verify, and book rentals securely. Payments are handled via escrow, ensuring trust between both parties.
+Guestel is a rental and property management platform developed as an API-first solution. It allows Property owners (Hosts) to list homes, hotels, and shortlets apartment, while Guests can discover, verify, and book rentals securely. Payments are handled via escrow, ensuring trust between both parties.
 
 ##  Features
 
