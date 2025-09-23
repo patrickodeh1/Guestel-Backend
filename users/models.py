@@ -41,7 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='guest')
     is_email_verified = models.BooleanField(default=False)
-    #is_phone_verified = models.BooleanField(default=False)
+    is_phone_verified = models.BooleanField(default=False)
     is_identity_verified = models.BooleanField(default=False)
     is_property_verified = models.BooleanField(default=False)
 
