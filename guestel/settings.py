@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     #local
     'users.apps.UsersConfig',
+    'properties.apps.PropertiesConfig',
 
     #3rd party
     'rest_framework',
